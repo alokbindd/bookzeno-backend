@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import Cart,CartItem
@@ -41,3 +41,28 @@ class AddToCartView(APIView):
         cart_item.save()
 
         return Response({'message':'Book Added to cart'})
+
+class RemoveCartItem(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self,request):
+        book_id = request.data.get('book_id')
+
+        book = get_object_or_404(Book, id=book_id)
+        cart = get_object_or_404(Cart, user=request.user)
+
+        cart_item = get_object_or_404(
+            CartItem,
+            cart=cart,
+            book=book
+        )
+        if cart_item.quantity > 1:
+            cart_item.quantity -= 1
+            cart_item.save()
+            return Response({'message':'Reduced quantity by 1'})
+        else:
+            cart_item.delete()
+            return Response({'message':'Item removed from cart'})
+
+
+    
