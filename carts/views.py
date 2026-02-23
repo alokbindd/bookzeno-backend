@@ -8,33 +8,26 @@ from rest_framework import status
 from books.models import Book
 
 # Create your views here.
-def session_id(request):
-    session_id = request.session.session_key
-    if not session_id:
-        session_id = request.session.create()
-    return session_id
+def get_session_id(request):
+    if not request.session.session_key:
+        request.session.create()
+    return request.session.session_key
 
 class CartView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self,request): 
-        
-        lookup = {}
         if request.user.is_authenticated:
-            lookup['user'] = request.user
+            print("enter if")
+            cart , _ = Cart.objects.get_or_create(user=request.user)
         else:
-            lookup['session_id'] = session_id(request)
+            session_key = get_session_id(request)
+            print(session_key)
+            cart , _ = Cart.objects.get_or_create(session_id=session_key)
         
-        print(lookup)
-        cart, created = Cart.objects.get_or_create(**lookup)
-        if not created:
-            print("enter try")
-            items = cart.items.all()
-            serializers = CartItemSerializer(items, many=True)
-            return Response(serializers.data, status=status.HTTP_200_OK)
-        else:
-            print("enter Expect")
-            return Response({'message':'no item'})
+        items = cart.items.all()
+        serializer = CartItemSerializer(items, many=True)
+        return Response(serializer.data)
     
 class AddToCartView(APIView):
     permission_classes = [IsAuthenticated]
