@@ -6,7 +6,7 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('category_name','slug')
 
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('category','title','slug','isbn','author','price','publication_date','stock')
+    list_display = ('id','category','title','slug','isbn','author','price','publication_date','stock')
     ordering = ('-publication_date',)
 
 
