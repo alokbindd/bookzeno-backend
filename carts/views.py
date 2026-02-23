@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 from .models import Cart,CartItem
 from .serializers import CartItemSerializer
 from rest_framework.response import Response
@@ -8,15 +8,33 @@ from rest_framework import status
 from books.models import Book
 
 # Create your views here.
+def session_id(request):
+    session_id = request.session.session_key
+    if not session_id:
+        session_id = request.session.create()
+    return session_id
 
 class CartView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-    def get(self,request):
-        cart, created = Cart.objects.get_or_create(user=request.user)
-        items = cart.items.all()
-        serializers = CartItemSerializer(items, many=True)
-        return Response(serializers.data, status=status.HTTP_200_OK)
+    def get(self,request): 
+        
+        lookup = {}
+        if request.user.is_authenticated:
+            lookup['user'] = request.user
+        else:
+            lookup['session_id'] = session_id(request)
+        
+        print(lookup)
+        cart, created = Cart.objects.get_or_create(**lookup)
+        if not created:
+            print("enter try")
+            items = cart.items.all()
+            serializers = CartItemSerializer(items, many=True)
+            return Response(serializers.data, status=status.HTTP_200_OK)
+        else:
+            print("enter Expect")
+            return Response({'message':'no item'})
     
 class AddToCartView(APIView):
     permission_classes = [IsAuthenticated]
