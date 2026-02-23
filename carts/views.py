@@ -1,11 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.decorators import APIView
-from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from .models import Cart,CartItem
 from .serializers import CartItemSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from books.models import Book
+from .services import merge_carts, get_or_create_cart
 
 # Create your views here.
 def get_session_id(request):
@@ -18,26 +19,50 @@ class CartView(APIView):
 
     def get(self,request): 
         if request.user.is_authenticated:
-            print("enter if")
             cart , _ = Cart.objects.get_or_create(user=request.user)
         else:
             session_key = get_session_id(request)
-            print(session_key)
             cart , _ = Cart.objects.get_or_create(session_id=session_key)
         
         items = cart.items.all()
         serializer = CartItemSerializer(items, many=True)
         return Response(serializer.data)
-    
-class AddToCartView(APIView):
+
+class MergeCartView(APIView):
     permission_classes = [IsAuthenticated]
+
+    def post(self,request):
+        session_key = request.session.session_key
+
+        if not session_key:
+            return Response(
+                {"message":"No guest session"},
+                status=status.HTTP_200_OK
+            )
+        
+        merged = merge_carts(user=request.user,session_key=session_key)
+
+        if merged:
+            return Response({"message":"Cart merged successfully"})
+        else:
+            return Response({"message":"No guest cart to merge"})
+
+
+class AddToCartView(APIView):
+    permission_classes = [AllowAny]
 
     def post(self,request):
         book_id = request.data.get('book_id')
         quantity = int(request.data.get('quantity',1))
+        book = get_object_or_404(Book,id=book_id)
 
-        book = Book.objects.get(id=book_id)
-        cart, created = Cart.objects.get_or_create(user=request.user)
+        if quantity <= 0:
+            return Response({"error":"Invalid quantity"},status=400)
+        
+        if quantity > book.stock:
+            return Response({"error":"Not enough stock"},status=400)
+
+        cart = get_or_create_cart(request)
 
         cart_item, created = CartItem.objects.get_or_create(
             cart=cart,
@@ -47,6 +72,8 @@ class AddToCartView(APIView):
         if created:
             cart_item.quantity = quantity
         else:
+            if cart_item.quantity + quantity > book.stock:
+                return Response({"error":"Stock limit exceeded"},status=400)
             cart_item.quantity += quantity
         
         cart_item.save()
