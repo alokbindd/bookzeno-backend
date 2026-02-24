@@ -2,6 +2,16 @@ from .models import Cart, CartItem
 from rest_framework import status
 from rest_framework.response import Response
 
+def get_cart(request):
+    if request.user.is_authenticated:
+        cart = Cart.objects.filter(user=request.user).first()
+    else:
+        if not request.session.session_key:
+            return None
+        session_key = request.session.session_key
+        cart = Cart.objects.filter(session_id=session_key).first()
+    return cart
+    
 
 def get_or_create_cart(request):
     if request.user.is_authenticated:
