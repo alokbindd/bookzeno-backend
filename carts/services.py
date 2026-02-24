@@ -1,4 +1,7 @@
 from .models import Cart, CartItem
+from rest_framework import status
+from rest_framework.response import Response
+
 
 def get_or_create_cart(request):
     if request.user.is_authenticated:
@@ -22,13 +25,16 @@ def merge_carts(user, session_key):
         for item in guest_cart.items.all():
             user_item, created = CartItem.objects.get_or_create(
                 book=item.book,
-                cart=user_cart
+                cart=user_cart,
+                defaults={"quantity":0}
             )
-
-            if not created:
-                user_item.quantity += item.quantity
+            
+            total_quantity = user_item.quantity + item.quantity
+            
+            if total_quantity > item.book.stock:
+                user_item.quantity = item.book.stock
             else:
-                user_item.quantity = item.quantity
+                user_item.quantity = total_quantity
             user_item.save()
         guest_cart.delete()
     else:
