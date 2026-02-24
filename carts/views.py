@@ -6,7 +6,7 @@ from .serializers import CartItemSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from books.models import Book
-from .services import merge_carts, get_or_create_cart
+from .services import merge_carts, get_or_create_cart, get_cart
 
 # Create your views here.
 def get_session_id(request):
@@ -86,11 +86,12 @@ class AddToCartView(APIView):
 class RemoveCartItemView(APIView):
     permission_classes = [AllowAny]
 
-    def delete(self,request):
-        book_id = request.data.get('book_id')
-
+    def delete(self, request, book_id):
         book = get_object_or_404(Book, id=book_id)
-        cart = get_or_create_cart(request)
+        cart = get_cart(request)
+
+        if not cart:
+            return Response({"error": "Cart not found"}, status=404)
 
         cart_item = get_object_or_404(
             CartItem,
@@ -105,5 +106,21 @@ class RemoveCartItemView(APIView):
             cart_item.delete()
             return Response({'message':'Item removed from cart'})
 
+class DeleteCartItemView(APIView):
+    permission_classes = [AllowAny]
 
+    def delete(self, request, book_id):
+        book = get_object_or_404(Book, id=book_id)
+        cart = get_cart(request)
+
+        if not cart:
+            return Response({"error": "Cart not found"}, status=404)
+        
+        cart_item = get_object_or_404(
+            CartItem,
+            book=book,
+            cart=cart
+        )
+        cart_item.delete()
+        return Response({"message":"Item removed from cart"})
     
