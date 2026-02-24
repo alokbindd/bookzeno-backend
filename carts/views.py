@@ -54,13 +54,16 @@ class AddToCartView(APIView):
     def post(self,request):
         book_id = request.data.get('book_id')
         quantity = int(request.data.get('quantity',1))
+        if not book_id:
+            return Response({"error": "Book ID required"}, status=400)
+        
         book = get_object_or_404(Book,id=book_id)
 
         if quantity <= 0:
-            return Response({"error":"Invalid quantity"},status=400)
+            return Response({"error":"Invalid quantity"}, status=400)
         
         if quantity > book.stock:
-            return Response({"error":"Not enough stock"},status=400)
+            return Response({"error":"Not enough stock"}, status=400)
 
         cart = get_or_create_cart(request)
 
@@ -80,14 +83,14 @@ class AddToCartView(APIView):
 
         return Response({'message':'Book Added to cart'})
 
-class RemoveCartItem(APIView):
-    permission_classes = [IsAuthenticated]
+class RemoveCartItemView(APIView):
+    permission_classes = [AllowAny]
 
     def delete(self,request):
         book_id = request.data.get('book_id')
 
         book = get_object_or_404(Book, id=book_id)
-        cart = get_object_or_404(Cart, user=request.user)
+        cart = get_or_create_cart(request)
 
         cart_item = get_object_or_404(
             CartItem,
