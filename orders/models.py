@@ -39,6 +39,7 @@ class Order(models.Model):
     order_note      = models.TextField(blank=True)
     order_total     = models.DecimalField(max_digits=10, decimal_places=2)
     tax             = models.DecimalField(max_digits=10, decimal_places=2)
+    grand_total     = models.DecimalField(max_digits=10, decimal_places=2)
     status          = models.CharField(max_length=20, choices=STATUS_CHOICE, default='pending')
     is_ordered      = models.BooleanField(default=False)
     created_at      = models.DateTimeField(auto_now_add=True)
@@ -46,6 +47,9 @@ class Order(models.Model):
 
     def __str__(self):
         return f'{self.first_name} {self.last_name} - #{self.order_number}'
+    
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
 
 class OrderProduct(models.Model):
     order       = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
