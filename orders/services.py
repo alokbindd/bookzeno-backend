@@ -48,3 +48,17 @@ def create_paypal_order(order):
     response = requests.post(url=url, json=data, headers=headers)
     
     return response.json()
+
+def capture_paypal_order(paypal_order_id):
+    access_token = get_paypal_access_token()
+
+    url = f"{settings.PAYPAL_BASE_URL}/v2/checkout/order/{paypal_order_id}/capture"
+
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {access_token}",
+    }
+
+    response = requests.post(url, headers=headers)
+
+    return response.json()
