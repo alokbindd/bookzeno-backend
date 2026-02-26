@@ -1,21 +1,21 @@
+from orders.serializers import CheckoutSerializer, OrderHistorySerializer, OrderDetailserializer
+from orders.services import create_paypal_order, capture_paypal_order
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import APIView
 from rest_framework.response import Response
-from rest_framework.exceptions import ValidationError
-from decimal import Decimal
+from rest_framework import generics
 
+from orders.models import Order, OrderProduct, Payment
 from books.models import Book
 from carts.models import Cart
-from orders.models import Order, OrderProduct, Payment
 
-from orders.services import create_paypal_order, capture_paypal_order
-
-from orders.serializers import CheckoutSerializer
 from django.utils.crypto import get_random_string
 from django.db import transaction
 from django.db.models import F
-
+from decimal import Decimal
 from datetime import date
+
 
 # Create your views here.
 
@@ -254,3 +254,16 @@ class CapturePayementView(APIView):
             "message":"Payment successful",
             "order_id": order.id
         }, status=200)
+
+class OrderHistoryView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderHistorySerializer
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user).order_by('-created_at')
+
+class OrderDetailView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = OrderDetailserializer
+    lookup_field = 'order_number'
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user)
