@@ -1,11 +1,14 @@
 from orders.serializers import CheckoutSerializer, OrderHistorySerializer, OrderDetailserializer
 from orders.services import create_paypal_order, capture_paypal_order
+from orders.pagination import OrderCursorPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import APIView
 from rest_framework.response import Response
 from rest_framework import generics
+from rest_framework import status
 
+from core.utils import success_response, error_response
 from orders.models import Order, OrderProduct, Payment
 from books.models import Book
 from carts.models import Cart
@@ -33,12 +36,12 @@ class CheckoutView(APIView):
         try:
             cart = Cart.objects.get(user=current_user)
         except Cart.DoesNotExist:
-            return Response({"error":"Cart is empty"}, status=400)
+            return error_response(message="Cart is empty", status=status.HTTP_400_BAD_REQUEST)
 
         # check cart_item
         cart_items = cart.items.all()
         if not cart_items.exists():
-            return Response({"error":"Cart is empty"}, status=400)
+            return error_response(message="Cart is empty", status=status.HTTP_400_BAD_REQUEST)
         
         with transaction.atomic():
             subtotal = Decimal("0.00")
@@ -49,11 +52,11 @@ class CheckoutView(APIView):
                 book = Book.objects.select_for_update().get(id=item.book_id)
 
                 if book.stock < item.quantity:
-                    return Response({
-                        "error": f"{book.title} has insufficient stock",
-                        "available": book.stock,
-                        "requested": item.quantity
-                    }, status=400)
+                    return error_response(
+                        message=f"{book.title} has insufficient stock",
+                        errors={"available": book.stock, "requested": item.quantity}, 
+                        status=status.HTTP_409_CONFLICT
+                        )
 
                 line_total = book.price * item.quantity
                 subtotal += line_total
@@ -107,14 +110,16 @@ class CheckoutView(APIView):
                     ordered=False
                 )
 
-            return Response({
-                "message":"Order created successfully",
-                "order_id":order.id,
-                "order_number":order.order_number,
-                "subtotal":subtotal,
-                "tax":tax,
-               "grand_total":grand_total
-            },status=201)
+            return success_response(
+                message="Order created successfully",
+                data={
+                    "order_id":order.id,
+                    "order_number":order.order_number,
+                    "subtotal":subtotal,
+                    "tax":tax,
+                    "grand_total":grand_total
+                },
+                status=status.HTTP_201_CREATED)
             
 class CreatePaymentView(APIView):
     permission_classes = [IsAuthenticated]
@@ -123,19 +128,19 @@ class CreatePaymentView(APIView):
         try:
             order = Order.objects.get(id=order_id)
         except Order.DoesNotExist:
-            return Response({"error":"Order not found"},status=404)
+            return error_response(message="Order not found",status=status.HTTP_404_NOT_FOUND)
         
         #security checks
         if order.user != request.user:
-            return Response({"error":"Unauthorized"},status=403)
+            return error_response(message="Unauthorized", status=status.HTTP_403_FORBIDDEN)
         
         if order.status != "pending":
-            return Response({"error":"Order cannot be Paid"},status=403)
+            return error_response(message="Order cannot be Paid", status=status.HTTP_409_CONFLICT)
         
         paypal_response = create_paypal_order(order)
 
         if "id" not in paypal_response:
-            return Response({"error":"Paypal error","details": paypal_response},status=400)
+            return error_response(message="Paypal error",errors=paypal_response, status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
         order.provider_order_id = paypal_response["id"]
         order.save(update_fields=["provider_order_id"])
@@ -147,10 +152,11 @@ class CreatePaymentView(APIView):
                 approval_url = link["href"]
                 break
 
-        return Response({
-            "paypal_order_id": paypal_response["id"],
-            "approval_url": approval_url
-        })
+        return success_response(
+            message="Payment created",
+            data={"paypal_order_id": paypal_response["id"],"approval_url": approval_url},
+            status=status.HTTP_201_CREATED
+        )
     
 class CapturePayementView(APIView):
     permission_classes = [IsAuthenticated]
@@ -159,27 +165,28 @@ class CapturePayementView(APIView):
         paypal_order_id = request.data.get("paypal_order_id")
 
         if not paypal_order_id:
-            return Response({"error":"Paypal order id is required"},status=400)
+            return error_response(message="Paypal order id is required", status=status.HTTP_400_BAD_REQUEST)
 
         # Capture payment from PayPal
         paypal_response = capture_paypal_order(paypal_order_id)
 
         if paypal_response.get("status") != "COMPLETED":
-            return Response({
-                "message":"Payment not completed",
-                "details": paypal_response,
-            },status=400)
+            return error_response(
+                message="Payment not completed",
+                errors={"details": paypal_response},
+                status=status.HTTP_409_CONFLICT
+            )
 
         # Extract data from response
         purchase_units  = paypal_response["purchase_units"][0]
         
         if not purchase_units.get("payments"):
-            return Response({"error": "Invalid payment response"}, status=400)
+            return error_response(message="Invalid payment response", status=status.HTTP_400_BAD_REQUEST)
         
         captures = purchase_units["payments"].get("captures")
 
         if not captures:
-            return Response({"error": "No capture found"}, status=400)
+            return error_response(message="No capture found", status=status.HTTP_400_BAD_REQUEST)
 
         payment         = captures[0]
         transaction_id  = payment["id"]
@@ -187,36 +194,36 @@ class CapturePayementView(APIView):
         currency_code   = payment["amount"]["currency_code"]
         
         if currency_code != "USD":
-            return Response({"error": "Currency mismatch"}, status=400)
+            return error_response(message="Currency mismatch", status=status.HTTP_400_BAD_REQUEST)
         
         # Critical transaction block
         with transaction.atomic():
             if Payment.objects.select_for_update().filter(payment_id=transaction_id).exists():
-                return Response({
-                    "message":"Payment already processed"
-                },status=200)
+                return success_response(
+                    message="Payment already processed"
+                )
             
             # Fetch order using provider_order_id
             try:
                 order = Order.objects.select_for_update().get(provider_order_id=paypal_order_id)
             except Order.DoesNotExist:
-                return Response({"error":"No Order with this reference id"},status=404)
+                return error_response(message="No Order with this reference id", status=status.HTTP_404_NOT_FOUND)
             
             if order.user != request.user:
-                return Response({"error":"Unauthorized"},status=403)
+                return error_response(message="Unauthorized", status=status.HTTP_403_FORBIDDEN)
             
             if order.status == "paid":
-                return Response({"message":"Order already has been processed"},status=200)
+                return success_response(message="Order already has been processed")
             
             captured_amount = Decimal(captured_amount)
             expected_total = (order.order_total + order.tax).quantize(Decimal("0.01"))
 
             if captured_amount != expected_total:
-                return Response({
-                    "error":"Amount mismatch",
-                    "expected": expected_total,
-                    "recieved": captured_amount,
-                },status=400)
+                return error_response(
+                    message="Amount mismatch",
+                    errors={"expected": expected_total,"recieved": captured_amount,},
+                    status=status.HTTP_409_CONFLICT
+                )
                     
             # Deduct stock safely
             for item in order.items.all():
@@ -250,20 +257,21 @@ class CapturePayementView(APIView):
             if cart:
                 cart.items.all().delete()
         
-        return Response({
-            "message":"Payment successful",
-            "order_id": order.id
-        }, status=200)
+        return success_response(
+            message="Payment successful",
+            data={"order_id": order.id}
+        )
 
 class OrderHistoryView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = OrderHistorySerializer
+    pagination_class = OrderCursorPagination
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user).order_by('-created_at')
+        return Order.objects.filter(user=self.request.user).order_by('-created_at').select_related("user")
 
 class OrderDetailView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = OrderDetailserializer
     lookup_field = 'order_number'
     def get_queryset(self):
-        return Order.objects.filter(user=self.request.user)
+        return Order.objects.filter(user=self.request.user).prefetch_related("payments","items__book")
