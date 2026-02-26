@@ -7,6 +7,7 @@ class OrderProductInline(admin.TabularInline):
     readonly_fields = ['book','quantity','book_price','ordered']
     extra = 0
 
+@admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['order_number','full_name','phone_number','email','city','order_total','tax','grand_total','status','is_ordered','created_at']
     list_filter = ['status','is_ordered']
@@ -14,6 +15,12 @@ class OrderAdmin(admin.ModelAdmin):
     list_per_page = 20
     inlines = [OrderProductInline]
 
-admin.site.register(Payment)
-admin.site.register(Order, OrderAdmin)
-admin.site.register(OrderProduct)
+@admin.register(OrderProduct)
+class OrderProductAdmin(admin.ModelAdmin):
+    list_display = ['order','book','quantity','book_price','ordered']
+    list_per_page = 10
+
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = ("payment_id", "order", "amount_paid", "status", "created_at")
+    list_filter = ("status",)
