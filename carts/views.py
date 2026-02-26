@@ -1,12 +1,14 @@
-from django.shortcuts import render, get_object_or_404
-from rest_framework.decorators import APIView
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
-from .models import Cart,CartItem
-from .serializers import CartItemSerializer
+from rest_framework.decorators import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from carts.services import merge_carts, get_or_create_cart, get_cart
+from django.shortcuts import render, get_object_or_404
+from core.utils import success_response, error_response
+from carts.serializers import CartItemSerializer
+from carts.models import Cart,CartItem
 from books.models import Book
-from .services import merge_carts, get_or_create_cart, get_cart
+from django.db.models import F
 
 # Create your views here.
 def get_session_id(request):
@@ -26,7 +28,7 @@ class CartView(APIView):
         
         items = cart.items.all()
         serializer = CartItemSerializer(items, many=True)
-        return Response(serializer.data)
+        return success_response(data=serializer.data)
 
 class MergeCartView(APIView):
     permission_classes = [IsAuthenticated]
@@ -35,17 +37,14 @@ class MergeCartView(APIView):
         session_key = request.session.session_key
 
         if not session_key:
-            return Response(
-                {"message":"No guest session"},
-                status=status.HTTP_200_OK
-            )
+            return success_response(message="No guest session")
         
         merged = merge_carts(user=request.user,session_key=session_key)
 
         if merged:
-            return Response({"message":"Cart merged successfully"})
+            return success_response(message="Cart merged successfully")
         else:
-            return Response({"message":"No guest cart to merge"})
+            return success_response(message="No guest cart to merge")
 
 
 class AddToCartView(APIView):
@@ -55,15 +54,15 @@ class AddToCartView(APIView):
         book_id = request.data.get('book_id')
         quantity = int(request.data.get('quantity',1))
         if not book_id:
-            return Response({"error": "Book ID required"}, status=400)
+            return error_response(message="Book ID required")
         
         book = get_object_or_404(Book,id=book_id)
 
         if quantity <= 0:
-            return Response({"error":"Invalid quantity"}, status=400)
+            return error_response(message="Invalid quantity", status=status.HTTP_400_BAD_REQUEST)
         
         if quantity > book.stock:
-            return Response({"error":"Not enough stock"}, status=400)
+            return error_response(message="Not enough stock", status=status.HTTP_409_CONFLICT)
 
         cart = get_or_create_cart(request)
 
@@ -76,12 +75,12 @@ class AddToCartView(APIView):
             cart_item.quantity = quantity
         else:
             if cart_item.quantity + quantity > book.stock:
-                return Response({"error":"Stock limit exceeded"},status=400)
+                return error_response(message="Stock limit exceeded", status=status.HTTP_409_CONFLICT)
             cart_item.quantity += quantity
         
         cart_item.save()
 
-        return Response({'message':'Book Added to cart'})
+        return success_response(message="Book Added to cart")
 
 class RemoveCartItemView(APIView):
     permission_classes = [AllowAny]
@@ -91,7 +90,7 @@ class RemoveCartItemView(APIView):
         cart = get_cart(request)
 
         if not cart:
-            return Response({"error": "Cart not found"}, status=404)
+            return success_response(message="Cart not found")
 
         cart_item = get_object_or_404(
             CartItem,
@@ -99,12 +98,13 @@ class RemoveCartItemView(APIView):
             book=book
         )
         if cart_item.quantity > 1:
-            cart_item.quantity -= 1
-            cart_item.save()
-            return Response({'message':'Reduced quantity by 1'})
+            CartItem.objects.filter(id=cart_item.id).update(
+                quantity=F("quantity") - 1
+            )
+            return success_response(message="Reduced quantity by 1")
         else:
             cart_item.delete()
-            return Response({'message':'Item removed from cart'})
+            return success_response(message="Item removed from cart", status=status.HTTP_204_NO_CONTENT)
 
 class DeleteCartItemView(APIView):
     permission_classes = [AllowAny]
@@ -114,7 +114,7 @@ class DeleteCartItemView(APIView):
         cart = get_cart(request)
 
         if not cart:
-            return Response({"error": "Cart not found"}, status=404)
+            return success_response(message="Cart not found")
         
         cart_item = get_object_or_404(
             CartItem,
@@ -122,5 +122,5 @@ class DeleteCartItemView(APIView):
             cart=cart
         )
         cart_item.delete()
-        return Response({"message":"Item removed from cart"})
+        return success_response(message="Item removed from cart", status=status.HTTP_204_NO_CONTENT)
     
