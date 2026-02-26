@@ -11,7 +11,7 @@ def get_paypal_access_token():
             "Accept-Language":"en-US"
         },
         auth=(settings.PAYPAL_CLIENT_ID, settings.PAYPAL_SECRET_KEY),
-        data={"grant_type":"client_credentials"},
+        data={"grant_type":"client_credentials",},
     )
 
     return response.json().get("access_token")
@@ -52,13 +52,12 @@ def create_paypal_order(order):
 def capture_paypal_order(paypal_order_id):
     access_token = get_paypal_access_token()
 
-    url = f"{settings.PAYPAL_BASE_URL}/v2/checkout/order/{paypal_order_id}/capture"
+    url = f"{settings.PAYPAL_BASE_URL}/v2/checkout/orders/{paypal_order_id}/capture"
 
     headers = {
         "Content-Type": "application/json",
         "Authorization": f"Bearer {access_token}",
     }
 
-    response = requests.post(url, headers=headers)
-
+    response = requests.post(url, headers=headers,)
     return response.json()
