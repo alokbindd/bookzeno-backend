@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'REMOVED_SECRET'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -70,7 +70,7 @@ ROOT_URLCONF = 'online_bookstore.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -158,6 +158,12 @@ PAYPAL_BASE_URL=config("PAYPAL_BASE_URL")
 PAYPAL_CLIENT_ID=config("PAYPAL_CLIENT_ID")
 PAYPAL_SECRET_KEY=config("PAYPAL_SECRET_KEY")
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+FRONTEND_URL = config('FRONTEND_URL', defaul='')
 
-FRONTEND_URL = "http://127.0.0.1:8000/"
+# smtp configuration
+
+EMAIL_HOST = config('EMAIL_HOST', default='')
+EMAIL_PORT = config('EMAIL_PORT',cast=int, default=587)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
