@@ -1,4 +1,7 @@
+from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Avg, Count
+
 
 # Create your models here.
 class Category(models.Model):
@@ -35,5 +38,32 @@ class Book(models.Model):
             )
         ]
 
+    @property
+    def average_rating(self):
+        avg = self.reviews.filter(status=True).aggregate(Avg("rating"))["rating__avg"]
+        return round(avg, 2) if avg else 0
+
+    @property
+    def count_review(self):
+        count = self.reviews.filter(status=True).aggregate(Count("rating"))["rating__count"]
+        return count or 0
+
     def __str__(self):
         return self.title
+
+class ReviewRating(models.Model):
+    user        = models.ForeignKey(User, on_delete=models.CASCADE)
+    book        = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="reviews")
+    subject     = models.CharField(max_length=100)
+    review      = models.TextField()
+    rating      = models.FloatField()
+    status      = models.BooleanField(default=True)
+    ip          = models.CharField(max_length=100, blank=True)
+    created_at  = models.DateTimeField(auto_now_add=True)
+    updated_at  = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "book")
+
+    def __str__(self):
+        return f"{self.subject} - {self.rating}"
