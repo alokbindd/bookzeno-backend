@@ -157,3 +157,7 @@ REST_FRAMEWORK = {
 PAYPAL_BASE_URL=config("PAYPAL_BASE_URL")
 PAYPAL_CLIENT_ID=config("PAYPAL_CLIENT_ID")
 PAYPAL_SECRET_KEY=config("PAYPAL_SECRET_KEY")
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+FRONTEND_URL = "http://127.0.0.1:8000/"
