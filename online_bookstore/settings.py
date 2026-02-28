@@ -158,7 +158,7 @@ PAYPAL_BASE_URL=config("PAYPAL_BASE_URL")
 PAYPAL_CLIENT_ID=config("PAYPAL_CLIENT_ID")
 PAYPAL_SECRET_KEY=config("PAYPAL_SECRET_KEY")
 
-FRONTEND_URL = config('FRONTEND_URL', defaul='')
+FRONTEND_URL = config('FRONTEND_URL', default='')
 
 # smtp configuration
 
