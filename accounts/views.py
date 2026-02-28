@@ -5,8 +5,10 @@ from accounts.tokens import account_activation_token
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.contrib.auth.models import User
+from django.template.loader import render_to_string
+from django.shortcuts import redirect
 
 class RegisterView(APIView):
 
@@ -16,14 +18,16 @@ class RegisterView(APIView):
             user = serializer.save()
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = account_activation_token.make_token(user)
-
-            activation_link = f"{settings.FRONTEND_URL}/activate/{uid}/{token}/"
-            send_mail(
-                subject="Activate your account",
-                message=f"Click the link to activate your account:\n{activation_link}",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-            )
+        
+            mail_subject = "Proceed to activate your account"
+            activation_link = f"{settings.FRONTEND_URL}activate/{uid}/{token}/"
+            message = render_to_string('accounts/account_verification_email.html',{
+                "user": user,
+                "activation_link": activation_link
+            })
+            to_email = user.email
+            send_email = EmailMessage(mail_subject, message, to=[to_email])
+            send_email.send()
 
             serializer = RegisterSerializer(user)
             return success_response(data=serializer.data)
@@ -49,5 +53,6 @@ class ActivateAccountView(APIView):
         if account_activation_token.check_token(user, token):
             user.is_active = True
             user.save()
-            return success_response(message="Account activated successfully") # return redirect("http://localhost:3000/login?activated=true")
+            return success_response(message="Account activated successfully") 
+            # return redirect("http://localhost:3000/login?activated=true")
         return error_response(message="Activation link expired or invalid")
