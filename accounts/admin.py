@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import UserProfile
-from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
 
+from accounts.models import UserProfile
 
 # Register your models here.
 admin.site.unregister(User)

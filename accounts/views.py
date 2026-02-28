@@ -1,22 +1,20 @@
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes, force_str
-from django.template.loader import render_to_string
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
-from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework_simplejwt.views import (TokenObtainPairView,
+                                            TokenRefreshView)
 
-from core.utils import success_response, error_response
+from accounts.serializers import (ChangePasswordSerializer,
+                                  CustomTokenObtainPairSerializer,
+                                  PasswordResetConfirmSerializer,
+                                  RegisterSerializer)
 from accounts.tokens import account_activation_token
-from accounts.serializers import (
-    RegisterSerializer,
-    CustomTokenObtainPairSerializer,
-    ChangePasswordSerializer,
-    PasswordResetConfirmSerializer,
-)
+from core.utils import error_response, success_response
 
 
 def _send_activation_email(user):

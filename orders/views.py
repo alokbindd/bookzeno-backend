@@ -1,24 +1,23 @@
-from orders.serializers import CheckoutSerializer, OrderHistorySerializer, OrderDetailserializer
-from orders.services import create_paypal_order, capture_paypal_order
-from orders.pagination import OrderCursorPagination
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ValidationError
-from rest_framework.decorators import APIView
-from rest_framework.response import Response
-from rest_framework import generics
-from rest_framework import status
+from datetime import date
+from decimal import Decimal
 
-from core.utils import success_response, error_response
-from orders.models import Order, OrderProduct, Payment
-from books.models import Book
-from carts.models import Cart
-
-from django.utils.crypto import get_random_string
 from django.db import transaction
 from django.db.models import F
-from decimal import Decimal
-from datetime import date
+from django.utils.crypto import get_random_string
+from rest_framework import generics, status
+from rest_framework.decorators import APIView
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
+from books.models import Book
+from carts.models import Cart
+from core.utils import error_response, success_response
+from orders.models import Order, OrderProduct, Payment
+from orders.pagination import OrderCursorPagination
+from orders.serializers import (CheckoutSerializer, OrderDetailserializer,
+                                OrderHistorySerializer)
+from orders.services import capture_paypal_order, create_paypal_order
 
 # Create your views here.
 

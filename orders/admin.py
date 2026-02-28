@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Payment, Order, OrderProduct
+
+from .models import Order, OrderProduct, Payment
+
 # Register your models here.
 
 class OrderProductInline(admin.TabularInline):

@@ -1,5 +1,7 @@
 from django.urls import path
-from .views import CheckoutView, CreatePaymentView, CapturePayementView, OrderHistoryView, OrderDetailView
+
+from .views import (CapturePayementView, CheckoutView, CreatePaymentView,
+                    OrderDetailView, OrderHistoryView)
 
 urlpatterns =[
     path('orders/', view=OrderHistoryView.as_view(), name='order-history'),

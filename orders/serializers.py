@@ -1,5 +1,7 @@
 from rest_framework import serializers
+
 from orders.models import Order, OrderProduct
+
 
 class CheckoutSerializer(serializers.Serializer):
     first_name      = serializers.CharField(max_length=50)

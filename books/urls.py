@@ -1,5 +1,7 @@
 from django.urls import path
-from .views import BookView, BookDetailView, BookReviewListView, SubmitReviewView, DeleteReviewView, AdminBookDetailView
+
+from .views import (AdminBookDetailView, BookDetailView, BookReviewListView,
+                    BookView, DeleteReviewView, SubmitReviewView)
 
 urlpatterns = [
     # Public

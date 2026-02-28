@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from books.models import Category, Book
-from books.models import ReviewRating
+
+from books.models import Book, Category, ReviewRating
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

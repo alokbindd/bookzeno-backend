@@ -1,6 +1,9 @@
 from rest_framework import serializers
-from .models import Cart, CartItem
+
 from books.models import Book
+
+from carts.models import Cart, CartItem
+
 
 class CartItemSerializer(serializers.ModelSerializer):
     book_title = serializers.ReadOnlyField(source='book.title')

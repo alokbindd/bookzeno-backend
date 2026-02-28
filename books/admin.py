@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Category, Book
+
+from books.models import Book, Category
+
 
 class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug':('category_name',)}

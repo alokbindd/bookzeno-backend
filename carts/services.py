@@ -1,6 +1,8 @@
-from .models import Cart, CartItem
 from rest_framework import status
 from rest_framework.response import Response
+
+from carts.models import Cart, CartItem
+
 
 def get_cart(request):
     if request.user.is_authenticated:
