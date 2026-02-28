@@ -175,3 +175,6 @@ cython_debug/
 
 # seed books
 books/management/
+
+#docs
+docs
