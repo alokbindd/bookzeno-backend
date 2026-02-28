@@ -236,6 +236,10 @@ class CapturePayementView(APIView):
                     stock=F("stock") - item.quantity
                 )
 
+                OrderProduct.objects.filter(order=order,book=book).update(
+                    ordered=True
+                )
+
             # Create payment record
             Payment.objects.create(
                 user=order.user,
