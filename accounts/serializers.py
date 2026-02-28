@@ -15,5 +15,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             password    = validate_data['password'],
             first_name  = validate_data.get('first_name',''),
             last_name   = validate_data.get('last_name',''),
+            is_active   = False
         )
         return user
