@@ -33,7 +33,7 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(","
 CORS_ALLOWED_ORIGINS = [
     "https://frontend.vercel.app",
     "https://vm-m1ucz2peh9eddr5o9a6tf1.vusercontent.net",
-    "http://127.0.0.1:8000/",
+    "http://192.168.0.102:3000",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
