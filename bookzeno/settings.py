@@ -32,7 +32,10 @@ ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(","
 
 CORS_ALLOWED_ORIGINS = [
     "https://frontend.vercel.app",
+    "https://vm-m1ucz2peh9eddr5o9a6tf1.vusercontent.net",
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -54,9 +57,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
