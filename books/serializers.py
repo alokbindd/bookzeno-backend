@@ -43,5 +43,6 @@ class BookSerializer(serializers.ModelSerializer):
             'publication_date',
             'reviews',
             'average_rating',
+            'count_review',
         ]
 
