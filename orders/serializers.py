@@ -37,7 +37,7 @@ class OrderDetailserializer(serializers.ModelSerializer):
     
     class Meta:
         model = Order
-        fields = ['id','order_number','status','full_name','email','phone_number','full_address','state','city','pincode','country','order_note','order_total','tax','grand_total','items','payments']
+        fields = ['id','order_number','status','full_name','email','phone_number','full_address','state','city','pincode','country','order_note','order_total','tax','grand_total','created_at','items','payments']
 
     def get_payments(self,obj):
         payment = obj.payments.filter(status='completed').first()
