@@ -3,10 +3,12 @@ from django.urls import path
 from .views import (ActivateAccountView, ChangePasswordView,
                     CustomTokenRefreshView, LoginView,
                     PasswordResetConfirmView, PasswordResetRequestView,
-                    RegisterView, DashboardView)
+                    RegisterView, DashboardView,
+                    UserProfileView)
 
 urlpatterns = [
     path('accounts/dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('accounts/userprofile/', UserProfileView.as_view(), name='userprofile'),
     path('accounts/register/', RegisterView.as_view(), name='register'),
     path('accounts/activate/<str:uid>/<str:token>/', ActivateAccountView.as_view(), name='activate'),
     path('accounts/login/', LoginView.as_view(), name='login'),
