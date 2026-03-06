@@ -11,7 +11,7 @@ class OrderProductInline(admin.TabularInline):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['order_number','full_name','phone_number','email','city','order_total','tax','grand_total','status','is_ordered','created_at']
+    list_display = ['order_number','user','full_name','phone_number','email','city','order_total','tax','grand_total','status','is_ordered','created_at']
     list_filter = ['status','is_ordered']
     search_fields = ['order_number','first_name','last_name','email']
     list_per_page = 20
