@@ -15,10 +15,12 @@ from accounts.serializers import (ChangePasswordSerializer,
                                   CustomTokenObtainPairSerializer,
                                   PasswordResetConfirmSerializer,
                                   RegisterSerializer,
-                                  DashboardSerializer)
+                                  DashboardSerializer,
+                                  UserProfileSerializer)
 from accounts.tokens import account_activation_token
 from core.utils import error_response, success_response
-
+from django.shortcuts import get_object_or_404
+from accounts.models import UserProfile
 
 def _send_activation_email(user):
     """Send activation email to user."""
@@ -177,3 +179,23 @@ class DashboardView(APIView):
         
         serializer = DashboardSerializer(user)
         return success_response(data=serializer.data)
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = get_object_or_404(User, id=request.user.id)
+        userprofile = get_object_or_404(UserProfile, user=user)
+        serializer = UserProfileSerializer(userprofile)
+        return success_response(data=serializer.data)
+
+    def patch(self, request):
+        user = get_object_or_404(User, id=request.user.id)
+        userprofile = get_object_or_404(UserProfile, user=user)
+        serializer = UserProfileSerializer(userprofile, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return success_response(data=serializer.data)
+        return error_response(errors=serializer.errors)
+        
+        
