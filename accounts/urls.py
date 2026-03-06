@@ -1,10 +1,9 @@
 from django.urls import path
 
 from .views import (ActivateAccountView, ChangePasswordView,
-                    CustomTokenRefreshView, LoginView,
+                    CustomTokenRefreshView, DashboardView, LoginView,
                     PasswordResetConfirmView, PasswordResetRequestView,
-                    RegisterView, DashboardView,
-                    UserProfileView)
+                    RegisterView, UserProfileView)
 
 urlpatterns = [
     path('accounts/dashboard/', DashboardView.as_view(), name='dashboard'),

@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from books.models import Book
-
 from carts.models import Cart, CartItem
 
 
