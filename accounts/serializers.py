@@ -1,6 +1,10 @@
 from django.contrib.auth.models import User
+from django.db.models import Sum, Count, Q
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
+
+# import order model for aggregations
+from orders.models import Order
 
 
 class CustomTokenObtainPairSerializer(serializers.Serializer):
@@ -93,3 +97,31 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 class PasswordResetConfirmSerializer(serializers.Serializer):
     new_password = serializers.CharField(write_only=True, min_length=8)
+
+class DashboardSerializer(serializers.ModelSerializer):
+    # expose calculated values via readonly fields or methods
+    total_orders = serializers.IntegerField(read_only=True)
+    total_spent = serializers.DecimalField(max_digits=10,decimal_places=2, read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'first_name',
+            'last_name',
+            'email',
+            'total_orders',
+            'total_spent',
+            'date_joined'
+        ]
+
+    # def get_total_orders(self, obj):
+    #     # count only completed/paid orders; adjust filter as needed
+    #     return Order.objects.filter(user=obj, status='paid').count()
+
+    # def get_total_spent(self, obj):
+    #     # sum the grand_total (or order_total) of paid orders
+    #     result = Order.objects.filter(user=obj, status='paid').aggregate(
+    #         total=Sum('grand_total')
+    #     )
+    #     return result['total'] or 0
