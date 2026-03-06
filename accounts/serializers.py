@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db.models import Sum, Count, Q
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
+from accounts.models import UserProfile
 
 # import order model for aggregations
 from orders.models import Order
@@ -102,14 +103,16 @@ class DashboardSerializer(serializers.ModelSerializer):
     # expose calculated values via readonly fields or methods
     total_orders = serializers.IntegerField(read_only=True)
     total_spent = serializers.DecimalField(max_digits=10,decimal_places=2, read_only=True)
+    profile_picture = serializers.ImageField(source="profile.profile_picture", read_only=True)
 
     class Meta:
         model = User
         fields = [
             'username',
+            'email',
+            'profile_picture',
             'first_name',
             'last_name',
-            'email',
             'total_orders',
             'total_spent',
             'date_joined'
@@ -125,3 +128,22 @@ class DashboardSerializer(serializers.ModelSerializer):
     #         total=Sum('grand_total')
     #     )
     #     return result['total'] or 0
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    dashboard = DashboardSerializer(source="user", read_only=True)
+
+    class Meta:
+        model = UserProfile
+        fields = [
+            'user',
+            'dashboard',
+            'phone_number',
+            'profile_picture',
+            'address_line_1',
+            'address_line_2',
+            'state',
+            'city',
+            'pincode',
+            'country'
+        ]
+        read_only_fields = ['user', 'dashboard']
