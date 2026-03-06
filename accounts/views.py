@@ -4,6 +4,8 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.db.models.functions import Coalesce
+from django.db.models import Q, Count, Sum, DecimalField
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import (TokenObtainPairView,
@@ -12,7 +14,8 @@ from rest_framework_simplejwt.views import (TokenObtainPairView,
 from accounts.serializers import (ChangePasswordSerializer,
                                   CustomTokenObtainPairSerializer,
                                   PasswordResetConfirmSerializer,
-                                  RegisterSerializer)
+                                  RegisterSerializer,
+                                  DashboardSerializer)
 from accounts.tokens import account_activation_token
 from core.utils import error_response, success_response
 
@@ -162,3 +165,15 @@ class PasswordResetConfirmView(APIView):
             user.save()
             return success_response(message="Password reset successfully.")
         return error_response(errors=serializer.errors)
+    
+class DashboardView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = User.objects.filter(id=request.user.id).annotate(
+            total_orders=Count("orders", filter=Q(orders__status="paid")),
+            total_spent=Coalesce(Sum("orders__grand_total",filter=Q(orders__status="paid")),0, output_field=DecimalField()),
+            ).first()
+        
+        serializer = DashboardSerializer(user)
+        return success_response(data=serializer.data)
