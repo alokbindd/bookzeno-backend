@@ -15,7 +15,7 @@ class Order(models.Model):
     )
 
     order_number        = models.CharField(max_length=225, unique=True)
-    user                = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    user                = models.ForeignKey(User, on_delete=models.PROTECT, related_name='orders', db_index=True)
     provider_order_id   = models.CharField(max_length=255, null=True, blank=True, unique=True)
     first_name          = models.CharField(max_length=50)
     last_name           = models.CharField(max_length=50)
@@ -31,9 +31,9 @@ class Order(models.Model):
     order_total         = models.DecimalField(max_digits=10, decimal_places=2)
     tax                 = models.DecimalField(max_digits=10, decimal_places=2)
     grand_total         = models.DecimalField(max_digits=10, decimal_places=2)
-    status              = models.CharField(max_length=20, choices=STATUS_CHOICE, default='pending')
+    status              = models.CharField(max_length=20, choices=STATUS_CHOICE, default='pending', db_index=True)
     is_ordered          = models.BooleanField(default=False)
-    created_at          = models.DateTimeField(auto_now_add=True)
+    created_at          = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at          = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -46,6 +46,8 @@ class Order(models.Model):
     @property
     def full_address(self):
         return f'{self.address_line_1}, {self.address_line_2}'
+    
+
 
 class OrderProduct(models.Model):
     order       = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
