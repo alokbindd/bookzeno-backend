@@ -3,9 +3,10 @@ from django.urls import path
 from .views import (ActivateAccountView, ChangePasswordView,
                     CustomTokenRefreshView, LoginView,
                     PasswordResetConfirmView, PasswordResetRequestView,
-                    RegisterView)
+                    RegisterView, DashboardView)
 
 urlpatterns = [
+    path('accounts/dashboard/', DashboardView.as_view(), name='dashboard'),
     path('accounts/register/', RegisterView.as_view(), name='register'),
     path('accounts/activate/<str:uid>/<str:token>/', ActivateAccountView.as_view(), name='activate'),
     path('accounts/login/', LoginView.as_view(), name='login'),
