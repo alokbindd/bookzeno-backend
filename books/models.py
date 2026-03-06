@@ -17,7 +17,7 @@ class Category(models.Model):
         return self.category_name
 
 class Book(models.Model):
-    category            = models.ForeignKey(Category,on_delete=models.CASCADE, related_name='books')
+    category            = models.ForeignKey(Category,on_delete=models.CASCADE, related_name='books', db_index=True)
     cover_image         = models.ImageField(upload_to='books/cover_image/', blank=True, null=True)
     title               = models.CharField(max_length=225, unique=True)
     slug                = models.SlugField(max_length=225, unique=True)
@@ -52,8 +52,8 @@ class Book(models.Model):
         return self.title
 
 class ReviewRating(models.Model):
-    user        = models.ForeignKey(User, on_delete=models.CASCADE)
-    book        = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="reviews")
+    user        = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+    book        = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="reviews", db_index=True)
     subject     = models.CharField(max_length=100)
     review      = models.TextField()
     rating      = models.FloatField()
