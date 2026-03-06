@@ -179,4 +179,5 @@ books/management/
 #docs
 docs
 books_data.json
+review.json
 backend_api_docs.md
