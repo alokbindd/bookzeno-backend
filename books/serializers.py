@@ -11,17 +11,22 @@ class CategorySerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)
     rating = serializers.FloatField(min_value=1, max_value=5)
+    reviewer_name = serializers.SerializerMethodField()
 
     class Meta:
         model = ReviewRating
         fields = [
             "id",
             "user",
+            "reviewer_name",
             "subject",
             "review",
             "rating",
             "created_at",
         ]
+
+    def get_reviewer_name(self,obj):
+        return f"{obj.user.first_name} {obj.user.last_name}"
 
 class BookSerializer(serializers.ModelSerializer):
     category = CategorySerializer(read_only=True)
