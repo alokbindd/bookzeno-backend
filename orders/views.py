@@ -123,9 +123,9 @@ class CheckoutView(APIView):
 class CreatePaymentView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def post(self, request, order_id):
+    def post(self, request, order_number):
         try:
-            order = Order.objects.get(id=order_id)
+            order = Order.objects.get(order_number=order_number)
         except Order.DoesNotExist:
             return error_response(message="Order not found",status=status.HTTP_404_NOT_FOUND)
         
