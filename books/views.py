@@ -67,9 +67,9 @@ class BookReviewListView(APIView):
     
     def get(self, request, slug):
         book = get_object_or_404(Book, slug=slug)
-        review = ReviewRating.objects.filter(book=book).order_by("-created_at")
-        serilaizer = ReviewSerializer(review, many=True)
-        return success_response(data=serilaizer.data)
+        review = ReviewRating.objects.filter(book=book).select_related("user").order_by("-created_at")
+        serializer = ReviewSerializer(review, many=True)
+        return success_response(data=serializer.data)
 
 class DeleteReviewView(APIView):
     permission_classes = [IsAuthenticated]
