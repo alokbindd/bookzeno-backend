@@ -8,6 +8,7 @@ from books.models import Book, ReviewRating
 from books.serializers import BookSerializer, ReviewSerializer
 from core.utils import error_response, success_response
 from orders.models import OrderProduct
+from django.db.models import Q
 
 # Create your views here.
 
@@ -79,3 +80,21 @@ class DeleteReviewView(APIView):
         review = get_object_or_404(ReviewRating, book=book, user=request.user)
         review.delete()
         return success_response(message="Review Deleted")
+
+class BookSearchView(APIView):
+
+    def get(self, request):
+        query = request.GET.get("q")
+
+        if not query:
+            return success_response(data=[])
+
+        books = Book.objects.filter(
+            Q(title__icontains=query) |
+            Q(author__icontains=query) |
+            Q(category__category_name__icontains=query)
+        )
+
+        serializer = BookSerializer(books, many=True)
+
+        return success_response(data=serializer.data)
