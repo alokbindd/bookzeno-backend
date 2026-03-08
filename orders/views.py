@@ -109,6 +109,8 @@ class CheckoutView(APIView):
                     ordered=False
                 )
 
+            cart.items.all().delete()
+
             return success_response(
                 message="Order created successfully",
                 data={
@@ -253,16 +255,10 @@ class CapturePayementView(APIView):
             order.status = "paid"
             order.is_ordered = True
             order.save()
-
-            # Clear cart items
-            cart = Cart.objects.filter(user=order.user).first()
-            
-            if cart:
-                cart.items.all().delete()
         
         return success_response(
             message="Payment successful",
-            data={"order_id": order.id}
+            data={"order_number": order.order_number}
         )
 
 class OrderHistoryView(generics.ListAPIView):
