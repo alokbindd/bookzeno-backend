@@ -41,8 +41,8 @@ def create_paypal_order(order):
             },
         ],
         "application_context":{
-            "return_url": "http://localhost:3000/payment-success",
-            "cancel_url": "http://localhost:3000/payment-cancel",
+            "return_url": "https://bookzeno.vercel.app/payment-success",
+            "cancel_url": "https://bookzeno.vercel.app/payment-cancel",
         },
     }
 
