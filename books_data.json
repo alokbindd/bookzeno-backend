@@ -1,0 +1,452 @@
+[
+{
+  "model": "books.category",
+  "pk": 1,
+  "fields": {
+    "category_name": "Fiction",
+    "slug": "fiction",
+    "description": "Explore imaginative storytelling including contemporary and classic fiction."
+  }
+},
+{
+  "model": "books.category",
+  "pk": 2,
+  "fields": {
+    "category_name": "Non-Fiction",
+    "slug": "non-fiction",
+    "description": "Discover real-world knowledge including biographies, history, and self-development."
+  }
+},
+{
+  "model": "books.category",
+  "pk": 3,
+  "fields": {
+    "category_name": "Technology",
+    "slug": "technology",
+    "description": "Books on programming, AI, cybersecurity, and emerging technologies."
+  }
+},
+{
+  "model": "books.category",
+  "pk": 4,
+  "fields": {
+    "category_name": "Business & Finance",
+    "slug": "business-finance",
+    "description": "Learn about entrepreneurship, investing, leadership, and financial growth."
+  }
+},
+{
+  "model": "books.category",
+  "pk": 5,
+  "fields": {
+    "category_name": "Romance",
+    "slug": "romance",
+    "description": "Heartwarming and emotional love stories across genres."
+  }
+},
+{
+  "model": "books.category",
+  "pk": 6,
+  "fields": {
+    "category_name": "Self Development",
+    "slug": "self-development",
+    "description": "Books focused on productivity, mindset, habits, and personal growth."
+  }
+},
+{
+  "model": "books.category",
+  "pk": 7,
+  "fields": {
+    "category_name": "Science",
+    "slug": "science",
+    "description": "Explore physics, biology, psychology, and scientific discoveries."
+  }
+},
+{
+  "model": "books.category",
+  "pk": 8,
+  "fields": {
+    "category_name": "Mystery & Thriller",
+    "slug": "mystery-thriller",
+    "description": "Suspenseful crime stories filled with twists and investigations."
+  }
+},
+{
+  "model": "books.category",
+  "pk": 9,
+  "fields": {
+    "category_name": "Fantasy",
+    "slug": "fantasy",
+    "description": "Magical worlds, mythical creatures, and epic adventures."
+  }
+},
+{
+  "model": "books.category",
+  "pk": 10,
+  "fields": {
+    "category_name": "Children",
+    "slug": "children",
+    "description": "Engaging and educational books for kids and young readers."
+  }
+},
+{
+  "model": "books.book",
+  "pk": 1,
+  "fields": {
+    "category": 10,
+    "cover_image": "books/cover_image/charlottes-web.jpg",
+    "title": "Charlotte's Web",
+    "slug": "charlottes-web",
+    "isbn": "9780061124952",
+    "description": "Charlotte's Web is a popular book in Children category.",
+    "author": "E. B. White",
+    "price": "399.00",
+    "publication_date": "1952-10-15",
+    "stock": 29,
+    "created_at": "2026-02-20T08:54:41.071Z",
+    "updated_at": "2026-02-20T13:46:56.052Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 2,
+  "fields": {
+    "category": 10,
+    "cover_image": "books/cover_image/matilda.jpg",
+    "title": "Matilda",
+    "slug": "matilda",
+    "isbn": "9780142410370",
+    "description": "Matilda is a popular book in Children category.",
+    "author": "Roald Dahl",
+    "price": "350.00",
+    "publication_date": "1988-10-01",
+    "stock": 40,
+    "created_at": "2026-02-20T08:54:54.043Z",
+    "updated_at": "2026-02-20T08:54:57.966Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 3,
+  "fields": {
+    "category": 9,
+    "cover_image": "books/cover_image/harry-potter-and-the-sorcerers-stone.jpg",
+    "title": "Harry Potter and the Sorcerer's Stone",
+    "slug": "harry-potter-and-the-sorcerers-stone",
+    "isbn": "9780439708180",
+    "description": "Harry Potter and the Sorcerer's Stone is a popular book in Fantasy category.",
+    "author": "J.K. Rowling",
+    "price": "599.00",
+    "publication_date": "1997-06-26",
+    "stock": 16,
+    "created_at": "2026-02-20T08:54:57.973Z",
+    "updated_at": "2026-02-28T06:37:01.859Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 4,
+  "fields": {
+    "category": 9,
+    "cover_image": "books/cover_image/the-hobbit.jpg",
+    "title": "The Hobbit",
+    "slug": "the-hobbit",
+    "isbn": "9780547928227",
+    "description": "The Hobbit is a popular book in Fantasy category.",
+    "author": "J.R.R. Tolkien",
+    "price": "450.00",
+    "publication_date": "1937-09-21",
+    "stock": 43,
+    "created_at": "2026-02-20T08:55:02.203Z",
+    "updated_at": "2026-02-20T08:55:05.816Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 5,
+  "fields": {
+    "category": 3,
+    "cover_image": "books/cover_image/clean-code.jpg",
+    "title": "Clean Code",
+    "slug": "clean-code",
+    "isbn": "9780132350884",
+    "description": "Clean Code is a popular book in Technology category.",
+    "author": "Robert C. Martin",
+    "price": "799.00",
+    "publication_date": "2008-08-01",
+    "stock": 24,
+    "created_at": "2026-02-20T08:55:05.823Z",
+    "updated_at": "2026-02-20T08:55:09.359Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 6,
+  "fields": {
+    "category": 3,
+    "cover_image": "books/cover_image/the-pragmatic-programmer.jpg",
+    "title": "The Pragmatic Programmer",
+    "slug": "the-pragmatic-programmer",
+    "isbn": "9780201616224",
+    "description": "The Pragmatic Programmer is a popular book in Technology category.",
+    "author": "Andrew Hunt",
+    "price": "750.00",
+    "publication_date": "1999-10-30",
+    "stock": 27,
+    "created_at": "2026-02-20T08:55:09.366Z",
+    "updated_at": "2026-02-20T08:55:10.421Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 7,
+  "fields": {
+    "category": 8,
+    "cover_image": "books/cover_image/gone-girl.jpg",
+    "title": "Gone Girl",
+    "slug": "gone-girl",
+    "isbn": "9780307588371",
+    "description": "Gone Girl is a popular book in Mystery & Thriller category.",
+    "author": "Gillian Flynn",
+    "price": "420.00",
+    "publication_date": "2012-06-05",
+    "stock": 35,
+    "created_at": "2026-02-20T09:09:59.927Z",
+    "updated_at": "2026-02-20T09:10:03.874Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 8,
+  "fields": {
+    "category": 8,
+    "cover_image": "books/cover_image/the-girl-with-the-dragon-tattoo.jpg",
+    "title": "The Girl with the Dragon Tattoo",
+    "slug": "the-girl-with-the-dragon-tattoo",
+    "isbn": "9780307454546",
+    "description": "The Girl with the Dragon Tattoo is a popular book in Mystery & Thriller category.",
+    "author": "Stieg Larsson",
+    "price": "450.00",
+    "publication_date": "2005-08-01",
+    "stock": 30,
+    "created_at": "2026-02-20T09:10:03.889Z",
+    "updated_at": "2026-02-20T09:10:08.071Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 9,
+  "fields": {
+    "category": 7,
+    "cover_image": "books/cover_image/a-brief-history-of-time.jpg",
+    "title": "A Brief History of Time",
+    "slug": "a-brief-history-of-time",
+    "isbn": "9780553380163",
+    "description": "A Brief History of Time is a popular book in Science category.",
+    "author": "Stephen Hawking",
+    "price": "550.00",
+    "publication_date": "1988-04-01",
+    "stock": 5,
+    "created_at": "2026-02-20T09:10:08.077Z",
+    "updated_at": "2026-02-23T16:57:49.432Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 10,
+  "fields": {
+    "category": 7,
+    "cover_image": "books/cover_image/the-selfish-gene.jpg",
+    "title": "The Selfish Gene",
+    "slug": "the-selfish-gene",
+    "isbn": "9780199291151",
+    "description": "The Selfish Gene is a popular book in Science category.",
+    "author": "Richard Dawkins",
+    "price": "500.00",
+    "publication_date": "1976-03-01",
+    "stock": 25,
+    "created_at": "2026-02-20T09:10:09.833Z",
+    "updated_at": "2026-02-20T09:10:13.557Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 11,
+  "fields": {
+    "category": 6,
+    "cover_image": "books/cover_image/atomic-habits.jpg",
+    "title": "Atomic Habits",
+    "slug": "atomic-habits",
+    "isbn": "9780735211292",
+    "description": "Atomic Habits is a popular book in Self Development category.",
+    "author": "James Clear",
+    "price": "650.00",
+    "publication_date": "2018-10-16",
+    "stock": 40,
+    "created_at": "2026-02-20T09:10:13.562Z",
+    "updated_at": "2026-02-20T09:10:17.050Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 12,
+  "fields": {
+    "category": 6,
+    "cover_image": "books/cover_image/the-power-of-now.jpg",
+    "title": "The Power of Now",
+    "slug": "the-power-of-now",
+    "isbn": "9781577314806",
+    "description": "The Power of Now is a popular book in Self Development category.",
+    "author": "Eckhart Tolle",
+    "price": "600.00",
+    "publication_date": "1997-01-01",
+    "stock": 30,
+    "created_at": "2026-02-20T09:10:17.056Z",
+    "updated_at": "2026-02-20T09:10:20.780Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 13,
+  "fields": {
+    "category": 5,
+    "cover_image": "books/cover_image/pride-and-prejudice.jpg",
+    "title": "Pride and Prejudice",
+    "slug": "pride-and-prejudice",
+    "isbn": "9780141439518",
+    "description": "Pride and Prejudice is a popular book in Romance category.",
+    "author": "Jane Austen",
+    "price": "399.00",
+    "publication_date": "1813-01-28",
+    "stock": 35,
+    "created_at": "2026-02-20T09:10:20.789Z",
+    "updated_at": "2026-02-20T09:10:24.407Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 14,
+  "fields": {
+    "category": 5,
+    "cover_image": "books/cover_image/me-before-you.jpg",
+    "title": "Me Before You",
+    "slug": "me-before-you",
+    "isbn": "9780143124542",
+    "description": "Me Before You is a popular book in Romance category.",
+    "author": "Jojo Moyes",
+    "price": "450.00",
+    "publication_date": "2012-01-05",
+    "stock": 25,
+    "created_at": "2026-02-20T09:10:24.413Z",
+    "updated_at": "2026-02-20T09:10:25.449Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 15,
+  "fields": {
+    "category": 4,
+    "cover_image": "books/cover_image/rich-dad-poor-dad.jpg",
+    "title": "Rich Dad Poor Dad",
+    "slug": "rich-dad-poor-dad",
+    "isbn": "9781612680194",
+    "description": "Rich Dad Poor Dad is a popular book in Business & Finance category.",
+    "author": "Robert Kiyosaki",
+    "price": "550.00",
+    "publication_date": "1997-04-01",
+    "stock": 50,
+    "created_at": "2026-02-20T09:10:25.459Z",
+    "updated_at": "2026-02-20T09:10:29.185Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 16,
+  "fields": {
+    "category": 4,
+    "cover_image": "books/cover_image/the-intelligent-investor.jpg",
+    "title": "The Intelligent Investor",
+    "slug": "the-intelligent-investor",
+    "isbn": "9780060555665",
+    "description": "The Intelligent Investor is a popular book in Business & Finance category.",
+    "author": "Benjamin Graham",
+    "price": "700.00",
+    "publication_date": "1949-01-01",
+    "stock": 30,
+    "created_at": "2026-02-20T09:10:29.191Z",
+    "updated_at": "2026-02-20T09:10:32.886Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 17,
+  "fields": {
+    "category": 2,
+    "cover_image": "books/cover_image/sapiens.jpg",
+    "title": "Sapiens",
+    "slug": "sapiens",
+    "isbn": "9780062316097",
+    "description": "Sapiens is a popular book in Non-Fiction category.",
+    "author": "Yuval Noah Harari",
+    "price": "750.00",
+    "publication_date": "2011-01-01",
+    "stock": 35,
+    "created_at": "2026-02-20T09:10:32.893Z",
+    "updated_at": "2026-02-20T09:10:36.518Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 18,
+  "fields": {
+    "category": 2,
+    "cover_image": "books/cover_image/educated.jpg",
+    "title": "Educated",
+    "slug": "educated",
+    "isbn": "9780399590504",
+    "description": "Educated is a popular book in Non-Fiction category.",
+    "author": "Tara Westover",
+    "price": "600.00",
+    "publication_date": "2018-02-20",
+    "stock": 25,
+    "created_at": "2026-02-20T09:10:36.524Z",
+    "updated_at": "2026-02-20T09:10:39.926Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 19,
+  "fields": {
+    "category": 1,
+    "cover_image": "books/cover_image/the-alchemist.jpg",
+    "title": "The Alchemist",
+    "slug": "the-alchemist",
+    "isbn": "9780061122415",
+    "description": "The Alchemist is a popular book in Fiction category.",
+    "author": "Paulo Coelho",
+    "price": "399.00",
+    "publication_date": "1988-01-01",
+    "stock": 50,
+    "created_at": "2026-02-20T09:10:39.934Z",
+    "updated_at": "2026-02-20T09:10:41.573Z"
+  }
+},
+{
+  "model": "books.book",
+  "pk": 20,
+  "fields": {
+    "category": 1,
+    "cover_image": "books/cover_image/the-kite-runner.jpg",
+    "title": "The Kite Runner",
+    "slug": "the-kite-runner",
+    "isbn": "9781594631931",
+    "description": "The Kite Runner is a popular book in Fiction category.",
+    "author": "Khaled Hosseini",
+    "price": "450.00",
+    "publication_date": "2003-05-29",
+    "stock": 30,
+    "created_at": "2026-02-20T09:10:41.582Z",
+    "updated_at": "2026-02-20T09:10:45.444Z"
+  }
+}
+]

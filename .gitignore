@@ -173,11 +173,8 @@ cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/django
 
-# seed books
-books/management/
-
 #docs
 docs
-books_data.json
+data.json
 review.json
 backend_api_docs.md
