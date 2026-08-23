@@ -8,8 +8,9 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ('category_name','slug')
 
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('id','category','title','slug','isbn','author','price','publication_date','stock')
-    ordering = ('-publication_date',)
+    list_display = ('id','category','title','slug','isbn','author','price','publication_date','stock','cover_image')
+    ordering = ('id',)
+    list_editable = ('cover_image',)
 
 class ReviewRatingAdmin(admin.ModelAdmin):
     list_display = ('id','user','book','subject','rating','status')
