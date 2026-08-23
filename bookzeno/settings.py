@@ -143,16 +143,25 @@ STATIC_URL = "/static/"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Media settings
-AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", default=None)
+SUPABASE_STORAGE_BUCKET_NAME = config("SUPABASE_STORAGE_BUCKET_NAME", default=None)
 
-if AWS_STORAGE_BUCKET_NAME:
-    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
-    AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME")
+if SUPABASE_STORAGE_BUCKET_NAME:
+    AWS_ACCESS_KEY_ID = config("SUPABASE_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = config("SUPABASE_SECRET_ACCESS_KEY")
+
+    AWS_STORAGE_BUCKET_NAME = SUPABASE_STORAGE_BUCKET_NAME
+    AWS_S3_REGION_NAME = config("SUPABASE_S3_REGION_NAME")
+    AWS_S3_ENDPOINT_URL = config("SUPABASE_S3_ENDPOINT")
 
     AWS_DEFAULT_ACL = None
     AWS_S3_FILE_OVERWRITE = False
     AWS_QUERYSTRING_AUTH = False
+
+    SUPABASE_PROJECT_REF = config("SUPABASE_PROJECT_REF")
+    AWS_S3_CUSTOM_DOMAIN = (
+        f"{SUPABASE_PROJECT_REF}.supabase.co/storage/v1/object/public/"
+        f"{SUPABASE_STORAGE_BUCKET_NAME}"
+    )
 
     STORAGES = {
         "default": {
@@ -162,7 +171,11 @@ if AWS_STORAGE_BUCKET_NAME:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
-    MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com/"
+
+    MEDIA_URL = (
+        f"https://{SUPABASE_PROJECT_REF}.supabase.co/"
+        f"storage/v1/object/public/{SUPABASE_STORAGE_BUCKET_NAME}/"
+    )
 else:
     # local filesystem fallback
     MEDIA_URL = "/media/"
