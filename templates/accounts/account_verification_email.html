@@ -1,17 +1,319 @@
 {% autoescape off %}
-Hi {{ user.first_name }},
+<!DOCTYPE html>
+<html lang="en">
 
-Thank you for registering with us.
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate Your BookZeno Account</title>
+</head>
 
-To activate your account, please click the link below:
+<body style="
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #333333;
+">
 
-{{ activation_link }}
+<!-- Outer Background -->
+<table
+    width="100%"
+    cellpadding="0"
+    cellspacing="0"
+    border="0"
+    style="
+        background-color: #f4f6f8;
+        padding: 40px 15px;
+    "
+>
+    <tr>
+        <td align="center">
 
-If you did not create this account, you can safely ignore this email.
+            <!-- Main Email Container -->
+            <table
+                width="600"
+                cellpadding="0"
+                cellspacing="0"
+                border="0"
+                style="
+                    max-width: 600px;
+                    width: 100%;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    overflow: hidden;
+                "
+            >
 
-This link will expire after a limited time for security reasons.
+                <!-- ================= HEADER ================= -->
+                <tr>
+                    <td
+                        style="
+                            background-color: #111827;
+                            padding: 22px 30px;
+                        "
+                    >
 
-Best regards,  
-The Team
-BookZeno
+                        <!-- Logo + Brand -->
+                        <table
+                            cellpadding="0"
+                            cellspacing="0"
+                            border="0"
+                            align="center"
+                        >
+                            <tr>
+
+                                <!-- Logo -->
+                                <td
+                                    style="
+                                        vertical-align: middle;
+                                        padding-right: 10px;
+                                    "
+                                >
+                                    <img
+                                        src="https://slxggqukzhfjduoedwht.supabase.co/storage/v1/object/public/BookZeno-Media/Logo/logo.svg"
+                                        alt="BookZeno"
+                                        width="42"
+                                        height="42"
+                                        style="
+                                            display: block;
+                                            width: 42px;
+                                            height: 42px;
+                                            object-fit: contain;
+                                            border: 0;
+                                        "
+                                    >
+                                </td>
+
+                                <!-- Brand Name -->
+                                <td
+                                    style="
+                                        vertical-align: middle;
+                                        font-size: 28px;
+                                        line-height: 42px;
+                                        font-weight: bold;
+                                        color: #ffffff;
+                                        white-space: nowrap;
+                                    "
+                                >
+                                    Bookzeno
+                                </td>
+
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+
+
+                <!-- ================= CONTENT ================= -->
+                <tr>
+                    <td
+                        style="
+                            padding: 40px 40px 30px 40px;
+                        "
+                    >
+
+                        <!-- Greeting -->
+                        <h1
+                            style="
+                                margin: 0 0 20px 0;
+                                font-size: 24px;
+                                line-height: 1.3;
+                                color: #111827;
+                            "
+                        >
+                            Welcome to BookZeno,
+                            {{ user.first_name }}!
+                        </h1>
+
+
+                        <!-- Introduction -->
+                        <p
+                            style="
+                                margin: 0 0 18px 0;
+                                font-size: 16px;
+                                line-height: 1.6;
+                                color: #4b5563;
+                            "
+                        >
+                            Thank you for registering with BookZeno.
+                            We're excited to have you with us.
+                        </p>
+
+
+                        <!-- Verification Message -->
+                        <p
+                            style="
+                                margin: 0 0 28px 0;
+                                font-size: 16px;
+                                line-height: 1.6;
+                                color: #4b5563;
+                            "
+                        >
+                            Please verify your email address by clicking
+                            the button below to activate your account.
+                        </p>
+
+
+                        <!-- ================= ACTIVATION BUTTON ================= -->
+                        <table
+                            cellpadding="0"
+                            cellspacing="0"
+                            border="0"
+                            align="center"
+                            style="
+                                margin: 0 auto 30px auto;
+                            "
+                        >
+                            <tr>
+                                <td
+                                    align="center"
+                                    style="
+                                        border-radius: 6px;
+                                        background-color: #2563eb;
+                                    "
+                                >
+                                    <a
+                                        href="{{ activation_link }}"
+                                        style="
+                                            display: inline-block;
+                                            padding: 14px 28px;
+                                            font-size: 16px;
+                                            font-weight: bold;
+                                            color: #ffffff;
+                                            text-decoration: none;
+                                            border-radius: 6px;
+                                        "
+                                    >
+                                        Activate My Account
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+
+
+                        <!-- ================= FALLBACK LINK ================= -->
+                        <p
+                            style="
+                                margin: 0 0 8px 0;
+                                font-size: 14px;
+                                line-height: 1.5;
+                                color: #6b7280;
+                            "
+                        >
+                            If the button above doesn't work, copy and paste
+                            the following link into your browser:
+                        </p>
+
+
+                        <p
+                            style="
+                                margin: 0 0 25px 0;
+                                font-size: 13px;
+                                line-height: 1.5;
+                                word-break: break-all;
+                            "
+                        >
+                            <a
+                                href="{{ activation_link }}"
+                                style="
+                                    color: #2563eb;
+                                    text-decoration: none;
+                                "
+                            >
+                                {{ activation_link }}
+                            </a>
+                        </p>
+
+
+                        <!-- ================= SECURITY NOTICE ================= -->
+                        <table
+                            width="100%"
+                            cellpadding="0"
+                            cellspacing="0"
+                            border="0"
+                            style="
+                                background-color: #f3f4f6;
+                                border-radius: 6px;
+                            "
+                        >
+                            <tr>
+                                <td
+                                    style="
+                                        padding: 15px;
+                                    "
+                                >
+
+                                    <p
+                                        style="
+                                            margin: 0;
+                                            font-size: 13px;
+                                            line-height: 1.5;
+                                            color: #6b7280;
+                                        "
+                                    >
+                                        <strong>
+                                            Security notice:
+                                        </strong>
+                                        <br>
+
+                                        If you did not create a BookZeno
+                                        account, you can safely ignore
+                                        this email.
+                                    </p>
+
+                                </td>
+                            </tr>
+                        </table>
+
+                    </td>
+                </tr>
+
+
+                <!-- ================= FOOTER ================= -->
+                <tr>
+                    <td
+                        align="center"
+                        style="
+                            padding: 25px 30px;
+                            border-top: 1px solid #e5e7eb;
+                            background-color: #fafafa;
+                        "
+                    >
+
+                        <p
+                            style="
+                                margin: 0 0 8px 0;
+                                font-size: 13px;
+                                line-height: 1.5;
+                                color: #9ca3af;
+                            "
+                        >
+                            This is an automated email from BookZeno.
+                            Please do not reply to this email.
+                        </p>
+
+
+                        <p
+                            style="
+                                margin: 0;
+                                font-size: 13px;
+                                color: #9ca3af;
+                            "
+                        >
+                            © BookZeno. All rights reserved.
+                        </p>
+
+                    </td>
+                </tr>
+
+            </table>
+
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
 {% endautoescape %}
