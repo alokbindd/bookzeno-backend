@@ -21,20 +21,58 @@ from accounts.serializers import (ChangePasswordSerializer,
                                   RegisterSerializer, UserProfileSerializer)
 from accounts.tokens import account_activation_token
 from core.utils import error_response, success_response
-
+from decouple import config
+from brevo import Brevo
+from brevo.transactional_emails import (
+    SendTransacEmailRequestSender,
+    SendTransacEmailRequestToItem,
+)
 
 def _send_activation_email(user):
-    """Send activation email to user."""
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = account_activation_token.make_token(user)
-    mail_subject = "Activate your account"
+
     activation_link = f"{settings.FRONTEND_URL}activate/{uid}/{token}/"
+
     message = render_to_string(
-        'accounts/account_verification_email.html',
-        {"user": user, "activation_link": activation_link},
+        "accounts/account_verification_email.html",
+        {
+            "user": user,
+            "activation_link": activation_link,
+        },
     )
-    email = EmailMessage(mail_subject, message, to=[user.email])
-    email.send()
+
+    client = Brevo(
+        api_key=config("BREVO_API_KEY")
+    )
+
+    result = client.transactional_emails.send_transac_email(
+        subject="Activate your BookZeno account",
+        html_content=message,
+        sender=SendTransacEmailRequestSender(
+            name="BookZeno",
+            email="django.stylokart@gmail.com",
+        ),
+        to=[
+            SendTransacEmailRequestToItem(
+                email=user.email,
+                name=user.first_name,
+            )
+        ],
+    )
+
+# def _send_activation_email(user):
+#     """Send activation email to user."""
+#     uid = urlsafe_base64_encode(force_bytes(user.pk))
+#     token = account_activation_token.make_token(user)
+#     mail_subject = "Activate your account"
+#     activation_link = f"{settings.FRONTEND_URL}activate/{uid}/{token}/"
+#     message = render_to_string(
+#         'accounts/account_verification_email.html',
+#         {"user": user, "activation_link": activation_link},
+#     )
+#     email = EmailMessage(mail_subject, message, to=[user.email])
+#     email.send()
 
 
 class RegisterView(APIView):
@@ -116,19 +154,49 @@ class ChangePasswordView(APIView):
             return success_response(message="Password changed successfully.")
         return error_response(errors=serializer.errors)
 
+# def _send_password_reset_email(user):
+#     """Send password reset link to user."""
+#     uid = urlsafe_base64_encode(force_bytes(user.pk))
+#     token = account_activation_token.make_token(user)
+#     mail_subject = "Reset your password"
+#     reset_link = f"{settings.FRONTEND_URL}reset-password/{uid}/{token}/"
+#     message = render_to_string(
+#         'accounts/password_reset_email.html',
+#         {"user": user, "reset_link": reset_link},
+#     )
+#     email = EmailMessage(mail_subject, message, to=[user.email])
+#     email.send()
 
 def _send_password_reset_email(user):
     """Send password reset link to user."""
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = account_activation_token.make_token(user)
-    mail_subject = "Reset your password"
-    reset_link = f"{settings.FRONTEND_URL}reset-password/{uid}/{token}/"
+
+    reset_link = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}/"
+
     message = render_to_string(
         'accounts/password_reset_email.html',
-        {"user": user, "reset_link": reset_link},
+        {"user": user,"reset_link": reset_link},
     )
-    email = EmailMessage(mail_subject, message, to=[user.email])
-    email.send()
+
+    client = Brevo(
+        api_key=config("BREVO_API_KEY")
+    )
+
+    result = client.transactional_emails.send_transac_email(
+        subject="Reset your password",
+        html_content=message,
+        sender=SendTransacEmailRequestSender(
+            name="BookZeno",
+            email="django.stylokart@gmail.com",
+        ),
+        to=[
+            SendTransacEmailRequestToItem(
+                email=user.email,
+                name=user.first_name
+            )
+        ]
+    )
 
 
 class PasswordResetRequestView(APIView):
