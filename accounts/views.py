@@ -172,7 +172,7 @@ def _send_password_reset_email(user):
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = account_activation_token.make_token(user)
 
-    reset_link = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}/"
+    reset_link = f"{settings.FRONTEND_URL}reset-password/{uid}/{token}/"
 
     message = render_to_string(
         'accounts/password_reset_email.html',
